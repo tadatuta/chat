@@ -2,8 +2,8 @@
  * Запросы к Slack API
  * @module
  */
-modules.define('api', ['socket-io', 'jquery', 'vow', 'lodash'],
-    function (provide, io, $, vow, _) {
+modules.define('api', ['socket-io', 'jquery', 'vow', 'functions__debounce'],
+    function (provide, io, $, vow, debounce) {
         var api = {
             /**
              * GET-запрос
@@ -12,7 +12,7 @@ modules.define('api', ['socket-io', 'jquery', 'vow', 'lodash'],
              * @param {Object} params - передаваемые данные
              * @return {Promise}
              */
-            get : _.debounce(function(action, params) {
+            get : debounce(function(action, params) {
                 return connect(action, params, 'get');
             }, 100),
             /**
@@ -22,7 +22,7 @@ modules.define('api', ['socket-io', 'jquery', 'vow', 'lodash'],
              * @param {Object} params - передаваемые данные
              * @return {Promise}
              */
-            post : _.debounce(function(action, params) {
+            post : debounce(function(action, params) {
                 return connect(action, params, 'post');
             }, 100)
         }
