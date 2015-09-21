@@ -2,8 +2,8 @@
  * Запросы к Slack API
  * @module
  */
-modules.define('api', ['socket-io', 'jquery', 'vow', 'functions__debounce'],
-    function (provide, io, $, vow, debounce) {
+modules.define('api', ['socket-io', 'jquery', 'vow'],
+    function(provide, io, $, vow) {
         var api = {
             /**
              * GET-запрос
@@ -12,9 +12,9 @@ modules.define('api', ['socket-io', 'jquery', 'vow', 'functions__debounce'],
              * @param {Object} params - передаваемые данные
              * @return {Promise}
              */
-            get : debounce(function(action, params) {
+            get : function(action, params) {
                 return connect(action, params, 'get');
-            }, 100),
+            },
             /**
              * POST-запрос
              *
@@ -22,10 +22,10 @@ modules.define('api', ['socket-io', 'jquery', 'vow', 'functions__debounce'],
              * @param {Object} params - передаваемые данные
              * @return {Promise}
              */
-            post : debounce(function(action, params) {
+            post : function(action, params) {
                 return connect(action, params, 'post');
-            }, 100)
-        }
+            }
+        };
 
         function connect(action, params, method) {
             params = params || {};
@@ -35,16 +35,16 @@ modules.define('api', ['socket-io', 'jquery', 'vow', 'functions__debounce'],
                 $.get('/csrfToken')
                     .done(function(data) {
                         var url = '/slack/' + action;
-                        var params = $.extend(params, { _csrf : data._csrf });
+                        $.extend(params, { _csrf : data._csrf });
 
                         io.socket[method](url, params, function(resData, jwres) {
-                            if (!resData || jwres.statusCode === 'error') {
-                                reject();
+                            if(!resData || resData.error || jwres.statusCode !== 200) {
+                                reject(resData.error || 'Ошибка подключения к API');
 
                                 return;
                             }
 
-                            resolve(data);
+                            resolve(resData.data);
                         });
                     })
                     .fail(function(err) {
