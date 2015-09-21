@@ -5,7 +5,7 @@
         { block : 'socket-io' },
         { block : 'jquery' },
         { block : 'vow' },
-        { block : 'functions__debounce' }
+        { block : 'functions' }
     ]
 }
 );
